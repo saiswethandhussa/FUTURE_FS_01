@@ -1,0 +1,219 @@
+.hero-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: 100px;
+  overflow: hidden;
+}
+
+.hero-container {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  align-items: center;
+  gap: 4rem;
+  z-index: 10;
+}
+
+@media (max-width: 992px) {
+  .hero-container {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    padding-top: 2rem;
+  }
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-greeting-wrapper {
+  margin-bottom: 1.5rem;
+}
+
+.hero-greeting {
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.hero-title {
+  font-size: 4rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin-bottom: 1.5rem;
+}
+
+.font-accent {
+  font-family: var(--font-headings);
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.75rem;
+  }
+}
+
+.hero-subtitle {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  font-family: var(--font-headings);
+}
+
+@media (max-width: 768px) {
+  .hero-subtitle {
+    font-size: 1.35rem;
+  }
+}
+
+.subtitle-prefix {
+  color: var(--text-secondary);
+}
+
+.subtitle-typing {
+  color: var(--accent-cyan);
+  margin-left: 0.5rem;
+  text-shadow: var(--glow-cyan);
+}
+
+.typing-cursor {
+  color: var(--accent-cyan);
+  margin-left: 0.2rem;
+  animation: blink 0.8s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.hero-description {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 580px;
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .hero-description {
+    font-size: 1rem;
+  }
+}
+
+.hero-ctas {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.hero-socials {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+.social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-glass);
+  color: var(--text-secondary);
+  transition: all var(--transition-normal);
+}
+
+.social-icon:hover {
+  color: var(--accent-cyan);
+  border-color: var(--accent-cyan);
+  background: hsla(180, 100%, 50%, 0.05);
+  transform: translateY(-3px);
+  box-shadow: var(--glow-cyan);
+}
+
+/* =========================================
+   INTERACTIVE TERMINAL WIDGET
+   ========================================= */
+.hero-widget-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.hero-widget {
+  width: 100%;
+  max-width: 420px;
+  border-color: var(--border-glass-hover);
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  font-family: 'Courier New', Courier, monospace;
+  animation: float 6s infinite ease-in-out;
+}
+
+.widget-header {
+  display: flex;
+  align-items: center;
+  background: var(--bg-tertiary);
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--border-glass);
+}
+
+.widget-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+.widget-dot.red { background-color: #ff5f56; }
+.widget-dot.yellow { background-color: #ffbd2e; }
+.widget-dot.green { background-color: #27c93f; }
+
+.widget-title {
+  margin-left: 1rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: lowercase;
+}
+
+.widget-body {
+  padding: 1.5rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.code-line {
+  white-space: pre-wrap;
+}
+
+.code-line.indent {
+  padding-left: 1.5rem;
+}
+
+.code-keyword { color: #f472b6; } /* Pink */
+.code-prop { color: #60a5fa; }    /* Blue */
+.code-val { color: #34d399; }     /* Emerald Green */
+.code-bracket { color: #fbbf24; } /* Amber */
+.code-comment { color: var(--text-muted); font-style: italic; }
+
+.code-output {
+  margin-top: 0.5rem;
+  color: var(--text-muted);
+  border-top: 1px dashed var(--border-glass);
+  padding-top: 0.5rem;
+  font-size: 0.8rem;
+}

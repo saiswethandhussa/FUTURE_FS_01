@@ -1,0 +1,209 @@
+.projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.project-card {
+  background: var(--bg-secondary);
+  border-color: var(--border-glass);
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+@media (max-width: 768px) {
+  .project-card {
+    padding: 1.5rem;
+    gap: 1.25rem;
+  }
+}
+
+.project-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.project-title-text {
+  font-size: 1.85rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+@media (max-width: 768px) {
+  .project-title-text {
+    font-size: 1.45rem;
+  }
+}
+
+.project-desc {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  max-width: 800px;
+}
+
+.project-tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.tech-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-glass);
+  color: var(--text-secondary);
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
+}
+
+.project-body-content {
+  border-top: 1px solid var(--border-glass);
+  padding-top: 1.5rem;
+}
+
+.bullets-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  font-family: var(--font-headings);
+}
+
+.project-bullets {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.project-bullets li {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  position: relative;
+  padding-left: 1.5rem;
+  line-height: 1.6;
+}
+
+.project-bullets li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--accent-cyan);
+  font-weight: 700;
+  text-shadow: var(--glow-cyan);
+}
+
+/* =========================================
+   EXPANDABLE SPECS PANEL
+   ========================================= */
+.project-details-panel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--transition-slow) cubic-bezier(0, 1, 0, 1);
+  background: hsla(222, 47%, 15%, 0.4);
+  border-radius: 8px;
+  border: 1px solid transparent;
+}
+
+.project-details-panel.expanded {
+  max-height: 1000px; /* Large enough value to fit all content */
+  border-color: var(--border-glass);
+  transition: max-height var(--transition-slow) cubic-bezier(0.1, 1, 0.1, 1);
+}
+
+.details-panel-inner {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.details-section h5 {
+  font-family: var(--font-headings);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--accent-cyan);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.05em;
+}
+
+.details-section p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.details-section-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .details-section-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}
+
+/* =========================================
+   PROJECT ACTIONS
+   ========================================= */
+.project-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border-glass);
+  padding-top: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.btn-details {
+  font-size: 0.85rem;
+  padding: 0.5rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.arrow-icon {
+  transition: transform var(--transition-normal);
+}
+
+.arrow-icon.rotated {
+  transform: rotate(180deg);
+}
+
+.project-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.project-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: var(--font-headings);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-glass);
+  padding: 0.5rem 1.25rem;
+  border-radius: 50px;
+  background-color: var(--bg-tertiary);
+  transition: all var(--transition-normal);
+}
+
+.project-link-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--accent-cyan);
+  box-shadow: var(--glow-cyan);
+  transform: translateY(-2px);
+}

@@ -15,15 +15,6 @@ export default function CodingAchievements() {
       linkLabel: 'View Certificate'
     },
     {
-      type: 'opensource',
-      title: 'Open Source Contributor',
-      issuer: 'Open Source Connect Global 2026',
-      description: 'Actively contributed code, reviewed PRs, and collaborated on global software projects within the open-source community.',
-      tag: 'Global Contributor',
-      color: 'var(--accent-purple)',
-      icon: '🌐'
-    },
-    {
       type: 'certification',
       title: 'Introduction to Web Applications',
       issuer: 'Coursera (Akamai Technologies)',

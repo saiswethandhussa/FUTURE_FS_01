@@ -1,154 +1,415 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import './Projects.css';
+import prescriptoImg from '../assets/prescripto.png';
 
 export default function Projects() {
-  const [expandedProject, setExpandedProject] = useState(null);
+  const [activeFilter, setActiveFilter] = useState('all');
+  const [selectedArchProject, setSelectedArchProject] = useState(null);
+  const [activeArchTab, setActiveArchTab] = useState('system');
+
+  const architectureData = {
+    askthefile: {
+      title: 'AskTheFile — Enterprise Agentic RAG Platform',
+      badge: 'Multi-Agent LangGraph & Hybrid Search',
+      tabs: [
+        {
+          id: 'system',
+          name: '1. System Architecture',
+          description: 'End-to-end multi-agent orchestration architecture featuring FastAPI REST backend, LangGraph state machine, tool dispatchers, and LangSmith telemetry.',
+          diagram: `User / Frontend (Streamlit)
+         │
+         ▼
+ FastAPI Backend (REST API)
+         │
+         ▼
+ LangGraph Orchestrator (StateGraph)
+         │
+    ┌────┴───────────────────────────┐
+    ▼                                ▼
+Planner Agent                   Router Agent
+                                     │
+           ┌─────────────────────────┼─────────────────────────┐
+           ▼                         ▼                         ▼
+    Retrieval Tool            Calculator Tool          Web Search Tool
+           │                                              (Tavily)
+    Hybrid Search
+    ├── Qdrant Dense Vector
+    ├── BM25 Keyword Search
+    └── CrossEncoder Rerank
+           │
+           ▼
+   Verification Agent
+           │
+           ▼
+    Response Agent (Google Gemini 2.5 Flash)
+           │
+     ┌─────┴─────────────────────────┐
+     ▼                               ▼
+PostgreSQL Memory             LangSmith Tracing`
+        },
+        {
+          id: 'retrieval',
+          name: '2. Hybrid Retrieval Pipeline',
+          description: 'Two-stage dense semantic and sparse lexical retrieval pipeline reranked via CrossEncoder for 35% higher context precision.',
+          diagram: `User Query
+    │
+    ├───────────────────────────────┐
+    ▼                               ▼
+Gemini Embeddings              BM25 Tokenization
+(gemini-embedding-001)         (Lexical / Keyword)
+    │                               │
+    ▼                               ▼
+Qdrant Vector Search          BM25 Candidate Ranking
+(Cosine Similarity)                 │
+    │                               │
+    └───────────────┬───────────────┘
+                    ▼
+          Merge & Deduplicate
+                    │
+                    ▼
+          CrossEncoder Reranker
+      (ms-marco-MiniLM-L-6-v2)
+                    │
+                    ▼
+          Top-K Context Chunks
+                    │
+                    ▼
+         Grounded LLM Generation`
+        },
+        {
+          id: 'workflow',
+          name: '3. Multi-Agent Workflow',
+          description: 'Autonomous multi-agent lifecycle coordinating session context, intelligent intent routing, tool execution, and factual verification.',
+          diagram: `  [ User Query ]
+        │
+        ▼
+ ┌───────────────┐
+ │ Planner Agent │  ──► Loads conversational context and history for session
+ └──────┬────────┘
+        ▼
+ ┌───────────────┐
+ │ Router Agent  │  ──► Analyzes query intent & selects tool (RAG / Math / Web)
+ └──────┬────────┘
+        ▼
+ ┌───────────────┐
+ │  Tool Agent   │  ──► Executes selected tool (Qdrant/BM25, Calculator, Tavily)
+ └──────┬────────┘
+        ▼
+ ┌────────────────────┐
+ │ Verification Agent │ ──► Validates retrieved context quality & completeness
+ └──────┬─────────────┘
+        ▼
+ ┌────────────────────┐
+ │   Response Agent   │ ──► Synthesizes grounded answer & persists memory
+ └──────┬─────────────┘
+        ▼
+  [ Final Response ]`
+        }
+      ]
+    },
+    'telco-churn': {
+      title: 'Telco Customer Churn MLOps Pipeline',
+      badge: 'Production ML Pipeline & Inference',
+      tabs: [
+        {
+          id: 'system',
+          name: '1. MLOps CI/CD Architecture',
+          description: 'Automated end-to-end Machine Learning operations pipeline featuring MLflow Tracking, Model Registry, FastAPI microservice, and GitHub Actions CI/CD.',
+          diagram: `Raw Customer Data (7,000+ Records)
+               │
+               ▼
+ Automated Preprocessing & Feature Engineering (30 Features)
+               │
+               ▼
+ Model Benchmarking (GridSearchCV)
+ ├── Random Forest
+ ├── Logistic Regression
+ └── XGBoost Classifier (ROC-AUC: 0.86)
+               │
+               ▼
+ MLflow Experiment Tracking & Model Registry
+               │
+               ▼
+ Containerized FastAPI Inference Service (Docker)
+               │
+               ▼
+ GitHub Actions CI/CD Pipeline (Automated Pytest & Deploy)`
+        }
+      ]
+    },
+    'fitness-tracker': {
+      title: 'AI-Powered Fitness Tracker',
+      badge: 'Data Flow Diagrams (DFDs) & Microservices',
+      tabs: [
+        {
+          id: 'system',
+          name: 'Level 0: System Context Diagram',
+          description: 'Defines the system boundaries, external actors (User, Keycloak Identity, Gemini Vision API), and core data interactions.',
+          diagram: `              ┌──────────────────────────────────────────────┐
+              │           Keycloak Identity Server           │
+              │         (OAuth2 / OIDC Token Issuer)         │
+              └──────────────────────┬───────────────────────┘
+                                     │  JWT Verification
+                                     ▼
+┌──────────────┐   User Requests   ┌───────────────────────────────────┐   Image / Prompts   ┌────────────────────────┐
+│     User     │ ────────────────► │                                   │ ──────────────────► │  Google Gemini API     │
+│   (Client)   │ ◄──────────────── │     AI-Powered Fitness Tracker    │ ◄────────────────── │ (Multimodal Vision API)│
+└──────────────┘   Fitness Insights│            Ecosystem              │   Nutritional &     └────────────────────────┘
+                   & Activity Data └─────────────────┬─────────────────┘   Form Analysis
+                                                     │
+                                                     ▼  Async Events & Persistence
+                                           ┌───────────────────┐
+                                           │  PostgreSQL / RAG │
+                                           │    & RabbitMQ     │
+                                           └───────────────────┘`
+        },
+        {
+          id: 'retrieval',
+          name: 'Level 1: Microservices DFD',
+          description: 'Decomposes the system into functional microservices, data stores (MongoDB, PostgreSQL pgvector), and event broker routing paths.',
+          diagram: `[ User (React/Redux Client) ]
+              │
+              ▼ (HTTPS / JWT)
+┌───────────────────────────────┐
+│     Spring Cloud Gateway      │  ──► Keycloak OAuth2 / JWT Auth Filter
+└──────────────┬────────────────┘
+               │
+   ┌───────────┼───────────────────────────┐
+   ▼           ▼                           ▼
+┌───────────┐ ┌─────────────────────────┐ ┌──────────────────────┐
+│ User/Auth │ │ Activity Tracking Svc   │ │ AI Recommendation   │
+│ Service   │ │ (Spring Boot REST)      │ │ Service (RAG/Vision) │
+└─────┬─────┘ └────────────┬────────────┘ └──────────┬───────────┘
+      │                    │                         │
+      ▼                    ▼ (Publish Activity Event)▼
+┌───────────┐        ┌───────────┐             ┌───────────┐
+│ MongoDB   │        │ RabbitMQ  │ ──────────► │ pgvector  │
+│ User Docs │        │ Event Bus │             │ PostgreSQL│
+└───────────┘        └───────────┘             └─────┬─────┘
+                                                     │
+                                                     ▼
+                                           ┌───────────────────┐
+                                           │ Google Gemini API │
+                                           │ Multimodal Vision │
+                                           └───────────────────┘`
+        },
+        {
+          id: 'workflow',
+          name: 'Level 2: AI Recommendation Pipeline',
+          description: 'Detailed trace of asynchronous event communication, payload validation, Resilience4j circuit breaking, and pgvector RAG synthesis.',
+          diagram: `[ User Logs Activity / Meal Image ]
+              │
+              ▼
+┌─────────────────────────────────┐
+│ Activity Tracking Microservice  │  ──► Validates payload & saves to Database
+└─────────────┬───────────────────┘
+              │
+              ▼ (Async Event: "activity.logged")
+┌─────────────────────────────────┐
+│   RabbitMQ Message Exchange     │  ──► Decouples ingest from AI processing
+└─────────────┬───────────────────┘
+              │
+              ▼
+┌─────────────────────────────────┐
+│  AI Recommendation Microservice │  ──► Consumes event with Resilience4j circuit breaker
+└─────────────┬───────────────────┘
+              │
+      ┌───────┴───────────────────────────┐
+      ▼                                   ▼
+┌───────────────────────────┐   ┌───────────────────────────┐
+│  Vector Similarity Search │   │ Google Gemini Vision API  │
+│  (PostgreSQL pgvector)    │   │ (Multimodal Analysis)     │
+└─────────────┬─────────────┘   └─────────────┬─────────────┘
+              │                               │
+              └───────────────┬───────────────┘
+                              ▼
+              ┌───────────────────────────────┐
+              │ Grounded Nutrition & Workout  │
+              │ Tailored AI Recommendations   │
+              └───────────────┬───────────────┘
+                              ▼
+              [ Real-Time Insights to Client ]`
+        }
+      ]
+    }
+  };
 
   const projectsData = [
     {
-      id: 'hms',
-      title: 'Hospital Management System',
-      category: 'Full-Stack MERN Application',
-      description: 'A comprehensive, role-based healthcare portal streamlining medical booking and administrative tasks.',
-      techStack: ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'JWT', 'Razorpay', 'Cloudinary', 'bcrypt', 'Tailwind CSS'],
-      githubLink: 'https://github.com/saiswethandhussa/prescripto',
-      liveLink: '#',
-      bullets: [
-        'Engineered role-based dashboards tailored specifically for admins, doctors, and patients.',
-        'Established secure session handling using JWT and password hashing via bcrypt.',
-        'Configured a live Razorpay payment gateway complete with backend webhook signature validation.',
-        'Facilitated real-time booking calendars reflecting actual doctor availability hours.',
-        'Structured an admin panel to oversee doctor credentials, appointment loads, and system parameters.',
-        'Refined MongoDB database schemas to prevent double-booking conflicts and optimize query performance.'
-      ],
-      details: {
-        architecture: 'Client-Server Separation via RESTful APIs. Admin and Doctor flows operate on distinct dashboard hooks, while MongoDB serves as the persistent query hub with Cloudinary storing doctors\' digital profiles.',
-        payment: 'Razorpay checkout API with secure server-to-server signature validation. Utilizes Node.js crypto module to verify callbacks before completing transaction states.',
-        schema: 'Strict relational mappings in MongoDB. The Appointment model holds references to Doctor and Patient models, using unique indices and composite key validations to ensure zero schedule overlap.'
-      }
+      id: 'askthefile',
+      title: 'AskTheFile — Agentic RAG Platform',
+      category: 'ai',
+      description: 'An enterprise multi-agent LangGraph orchestrator featuring dynamic agent routing and hybrid dense-sparse vector retrieval (Qdrant + BM25).',
+      techStack: ['Python', 'LangGraph', 'Gemini 2.5', 'Qdrant', 'FastAPI', 'Docker'],
+      githubLink: 'https://github.com/saiswethandhussa/askthefile-agentic-rag',
+      hasArchitecture: true,
+      image: null,
+      mockupBrand: 'AskTheFile AI',
+      mockupHeadline: 'Multi-Agent Enterprise RAG & Hybrid Search',
+      mockupButton: 'Agentic RAG Engine'
     },
     {
-      id: 'pms',
-      title: 'Project Management System',
-      category: 'Full-Stack PostgreSQL Application',
-      description: 'A multi-tenant project planning tool optimizing task assignments, progress tracking, and remote team alignment.',
-      techStack: ['React.js', 'Node.js', 'Express.js', 'PostgreSQL', 'Prisma ORM', 'Clerk Auth', 'Ingest', 'Brevo', 'Tailwind CSS'],
-      githubLink: 'https://github.com/saiswethandhussa/Project-Management',
-      liveLink: '#',
-      bullets: [
-        'Designed a multi-tenant environment with rigorous Role-Based Access Controls (RBAC) to ensure organizational data partitioning.',
-        'Delivered highly interactive Gantt/Kanban styled progress dashboards for agile tracking.',
-        'Enabled granular task tracking including priority statuses, deadline countdowns, and assignees.',
-        'Integrated Clerk Authentication for enterprise-grade authentication and session management.',
-        'Leveraged PostgreSQL (hosted on Neon) coupled with Prisma ORM for relational queries.',
-        'Orchestrated background batch jobs and asynchronous worker tasks using Ingest.',
-        'Automated HTML email notifications via Brevo API based on system state changes.'
-      ],
-      details: {
-        architecture: 'Multi-tenant relational layout. Prisma ORM acts as the type-safe abstraction layer interacting with a cloud PostgreSQL database. Clerk handles auth tokens, feeding organizational metadata directly into database contexts.',
-        background: 'Ingest workers perform scheduled database updates and status checks. Email notification queues run asynchronously to prevent blocking main REST API cycles.',
-        security: 'Strict tenant checks enforced at the middleware level. Database queries utilize tenant-specific keys, preventing horizontal privilege escalations.'
-      }
+      id: 'telco-churn',
+      title: 'Telco Churn MLOps Pipeline',
+      category: 'ai',
+      description: 'An automated feature engineering & classification pipeline benchmarked with XGBoost (0.86 ROC-AUC) with MLflow tracking and CI/CD.',
+      techStack: ['Python', 'Scikit-Learn', 'MLflow', 'FastAPI', 'Docker', 'Pandas'],
+      githubLink: 'https://github.com/saiswethandhussa/telco-churn-mlops',
+      hasArchitecture: true,
+      image: null,
+      mockupBrand: 'Churn MLOps',
+      mockupHeadline: 'Production ML Pipeline & Real-Time Inference',
+      mockupButton: 'MLflow Model Registry'
+    },
+    {
+      id: 'fitness-tracker',
+      title: 'AI-Powered Fitness Tracker',
+      category: 'web',
+      description: 'A cloud-native Spring Boot microservices backend secured with Keycloak, featuring an event-driven multimodal AI pipeline with RabbitMQ, Gemini Vision, and pgvector RAG.',
+      techStack: ['Spring Boot', 'React.js', 'Keycloak', 'RabbitMQ', 'PostgreSQL', 'Gemini API'],
+      githubLink: 'https://github.com/saiswethandhussa/Ai--fitness',
+      hasArchitecture: true,
+      image: null,
+      mockupBrand: 'FitAI Tracker',
+      mockupHeadline: 'Multimodal AI Fitness & Microservices Pipeline',
+      mockupButton: 'Gemini Vision AI'
+    },
+    {
+      id: 'hms',
+      title: 'Hospital Management System',
+      category: 'web',
+      description: 'A comprehensive role-based healthcare portal streamlining doctor appointments, patient records, and secure Razorpay payments.',
+      techStack: ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Razorpay', 'Tailwind CSS'],
+      githubLink: 'https://github.com/saiswethandhussa/prescripto',
+      liveLink: 'https://prescripto-frontend-caqq.onrender.com',
+      hasArchitecture: false,
+      image: prescriptoImg,
+      mockupBrand: 'Prescripto',
+      mockupHeadline: 'Your Complete Healthcare & Appointment Portal',
+      mockupButton: 'Book Doctor'
     }
   ];
 
-  const toggleDetails = (projectId) => {
-    if (expandedProject === projectId) {
-      setExpandedProject(null);
-    } else {
-      setExpandedProject(projectId);
-    }
-  };
+  const filteredProjects = activeFilter === 'all' 
+    ? projectsData 
+    : projectsData.filter(p => p.category === activeFilter);
+
+  const activeProjectArch = selectedArchProject ? architectureData[selectedArchProject.id] : null;
 
   return (
     <section id="projects" className="projects-section section">
       <div className="projects-container container">
-        <h2 className="section-title">Featured Creations</h2>
+        <h2 className="section-title">
+          My <span className="title-highlight">Projects</span>
+        </h2>
+
+        {/* Category Filter Tabs */}
+        <div className="projects-filter-tabs">
+          <button 
+            className={`filter-tab-btn ${activeFilter === 'all' ? 'active' : ''}`}
+            onClick={() => setActiveFilter('all')}
+          >
+            All Projects ({projectsData.length})
+          </button>
+          <button 
+            className={`filter-tab-btn ${activeFilter === 'ai' ? 'active' : ''}`}
+            onClick={() => setActiveFilter('ai')}
+          >
+            AI & Data Science ({projectsData.filter(p => p.category === 'ai').length})
+          </button>
+          <button 
+            className={`filter-tab-btn ${activeFilter === 'web' ? 'active' : ''}`}
+            onClick={() => setActiveFilter('web')}
+          >
+            Full Stack & Backend ({projectsData.filter(p => p.category === 'web').length})
+          </button>
+        </div>
         
-        <div className="projects-list">
-          {projectsData.map((project) => (
-            <div key={project.id} className="project-card glass-card">
-              <div className="project-header">
-                <span className="project-badge badge badge-cyan">{project.category}</span>
-                <h3 className="project-title-text">{project.title}</h3>
-                <p className="project-desc">{project.description}</p>
-                
-                <div className="project-tech">
-                  {project.techStack.map((tech, idx) => (
-                    <span key={idx} className="tech-badge">{tech}</span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="project-body-content">
-                <h4 className="bullets-title">Key Accomplishments</h4>
-                <ul className="project-bullets">
-                  {project.bullets.map((bullet, idx) => (
-                    <li key={idx}>{bullet}</li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Collapsible Architecture Details Panel */}
-              <div className={`project-details-panel ${expandedProject === project.id ? 'expanded' : ''}`}>
-                <div className="details-panel-inner">
-                  <div className="details-section">
-                    <h5>🛠️ System Architecture</h5>
-                    <p>{project.details.architecture || project.details.background}</p>
+        <div className="projects-grid">
+          {filteredProjects.map((project) => (
+            <div key={project.id} className="project-grid-card glass-card">
+              {/* Top Mockup / Image Banner */}
+              <div className="project-banner">
+                {project.image ? (
+                  <div className="banner-image-wrapper">
+                    <img 
+                      src={project.image} 
+                      alt={project.title} 
+                      className="project-banner-img"
+                    />
                   </div>
-                  
-                  {project.id === 'hms' ? (
-                    <div className="details-section-grid">
-                      <div className="details-section">
-                        <h5>💳 Payment Gateways</h5>
-                        <p>{project.details.payment}</p>
-                      </div>
-                      <div className="details-section">
-                        <h5>📅 Collision Prevention</h5>
-                        <p>{project.details.schema}</p>
-                      </div>
+                ) : (
+                  <div className="ai-banner-content">
+                    <div className="banner-dots">
+                      <span className="dot red"></span>
+                      <span className="dot yellow"></span>
+                      <span className="dot green"></span>
                     </div>
-                  ) : (
-                    <div className="details-section-grid">
-                      <div className="details-section">
-                        <h5>🛡️ Multi-Tenant Shield</h5>
-                        <p>{project.details.security}</p>
-                      </div>
-                      <div className="details-section">
-                        <h5>📧 Mail Automations</h5>
-                        <p>Leverages Brevo SMTP mailers integrated with event triggers on database updates.</p>
-                      </div>
+                    <div className="banner-content">
+                      <span className="banner-logo-badge">{project.mockupBrand}</span>
+                      <h4 className="banner-headline">{project.mockupHeadline}</h4>
+                      <span className="banner-mini-btn">{project.mockupButton}</span>
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
 
-              <div className="project-actions">
-                <button 
-                  onClick={() => toggleDetails(project.id)} 
-                  className="btn btn-secondary btn-details"
-                >
-                  {expandedProject === project.id ? 'Hide Specs' : 'View Specs'}
-                  <svg 
-                    className={`arrow-icon ${expandedProject === project.id ? 'rotated' : ''}`}
-                    xmlns="http://www.w3.org/2000/svg" 
-                    width="16" 
-                    height="16" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    strokeWidth="2.5" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                  >
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                  </svg>
-                </button>
+              {/* Project Card Details */}
+              <div className="project-card-body">
+                <h3 className="project-name">{project.title}</h3>
+                <p className="project-summary">{project.description}</p>
                 
-                <div className="project-links">
-                  <a href={project.githubLink} target="_blank" rel="noopener noreferrer" className="project-link-btn" aria-label="GitHub Repository">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
-                    Code
+                <div className="project-tech-tags">
+                  {project.techStack.map((tech, idx) => (
+                    <span key={idx} className="project-tag-pill">{tech}</span>
+                  ))}
+                </div>
+
+                <div className="project-btn-actions">
+                  {project.hasArchitecture ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedArchProject(project);
+                        setActiveArchTab('system');
+                      }}
+                      className="btn-card-live btn-open-arch"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                        <polyline points="2 17 12 22 22 17"></polyline>
+                        <polyline points="2 12 12 17 22 12"></polyline>
+                      </svg>
+                      <span>Architecture</span>
+                    </button>
+                  ) : (
+                    <a 
+                      href={project.liveLink} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="btn-card-live"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                      </svg>
+                      <span>Live</span>
+                    </a>
+                  )}
+                  
+                  <a 
+                    href={project.githubLink} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="btn-card-code"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="16 18 22 12 16 6"></polyline>
+                      <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                    <span>Code</span>
                   </a>
                 </div>
               </div>
@@ -156,6 +417,80 @@ export default function Projects() {
           ))}
         </div>
       </div>
+
+      {/* Architecture Diagrams Modal Mounted to Body */}
+      {selectedArchProject && activeProjectArch && typeof document !== 'undefined' && createPortal(
+        <div className="arch-modal-overlay" onClick={() => setSelectedArchProject(null)}>
+          <div className="arch-modal-box glass-card" onClick={(e) => e.stopPropagation()}>
+            <div className="arch-modal-header">
+              <div className="arch-header-text">
+                <span className="arch-badge">🏗️ Architecture Overview</span>
+                <h3 className="arch-modal-title">{activeProjectArch.title}</h3>
+              </div>
+              <button 
+                className="arch-close-btn" 
+                onClick={() => setSelectedArchProject(null)}
+                aria-label="Close Architecture Modal"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Architecture Tabs */}
+            {activeProjectArch.tabs.length > 1 && (
+              <div className="arch-tabs-nav">
+                {activeProjectArch.tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    className={`arch-tab-btn ${activeArchTab === tab.id ? 'active' : ''}`}
+                    onClick={() => setActiveArchTab(tab.id)}
+                  >
+                    {tab.name}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Active Tab Content */}
+            {activeProjectArch.tabs.map((tab) => {
+              if (activeProjectArch.tabs.length > 1 && activeArchTab !== tab.id) return null;
+              return (
+                <div key={tab.id} className="arch-tab-body">
+                  <p className="arch-tab-desc">{tab.description}</p>
+                  <div className="arch-diagram-wrapper">
+                    <pre className="arch-diagram-code">
+                      <code>{tab.diagram}</code>
+                    </pre>
+                  </div>
+                </div>
+              );
+            })}
+
+            <div className="arch-modal-footer">
+              <a 
+                href={selectedArchProject.githubLink} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="btn-card-code arch-github-link"
+              >
+                <span>View GitHub Repository</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </a>
+              <button 
+                className="btn-card-live arch-done-btn"
+                onClick={() => setSelectedArchProject(null)}
+              >
+                Close Architecture
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </section>
   );
 }

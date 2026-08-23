@@ -1,41 +1,53 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import './Hero.css';
+import profileImg from '../assets/profile.jpg';
 
 export default function Hero() {
-  const titles = ["Full-Stack Developer", "Competitive Programmer", "Problem Solver"];
   const [currentText, setCurrentText] = useState('');
-  const [titleIndex, setTitleIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [typingSpeed, setTypingSpeed] = useState(150);
+  const [loopNum, setLoopNum] = useState(0);
+  const [typingSpeed, setTypingSpeed] = useState(120);
+  const [showResumeModal, setShowResumeModal] = useState(false);
+
+  const roles = [
+    'Software Developer',
+    'Full-Stack Engineer',
+    'Competitive Programmer',
+    'Problem Solver'
+  ];
 
   useEffect(() => {
-    const handleTyping = () => {
-      const fullTitle = titles[titleIndex];
-      if (!isDeleting) {
-        // Typing characters
-        setCurrentText(fullTitle.substring(0, currentText.length + 1));
-        if (currentText === fullTitle) {
-          // Completed typing title, wait and start deleting
-          setIsDeleting(true);
-          setTypingSpeed(100); // Wait time before deleting is handled outside this loop
-        }
-      } else {
-        // Deleting characters
-        setCurrentText(fullTitle.substring(0, currentText.length - 1));
-        if (currentText === '') {
-          setIsDeleting(false);
-          setTitleIndex((prev) => (prev + 1) % titles.length);
-          setTypingSpeed(150);
-        }
-      }
-    };
+    let timer = setTimeout(() => {
+      handleTyping();
+    }, typingSpeed);
 
-    const timer = setTimeout(handleTyping, isDeleting && currentText === titles[titleIndex] ? 2000 : typingSpeed);
     return () => clearTimeout(timer);
-  }, [currentText, isDeleting, titleIndex]);
+  }, [currentText, isDeleting, loopNum]);
 
-  const handleScrollToSection = (targetId) => {
-    const element = document.getElementById(targetId);
+  const handleTyping = () => {
+    const i = loopNum % roles.length;
+    const fullText = roles[i];
+
+    if (isDeleting) {
+      setCurrentText(fullText.substring(0, currentText.length - 1));
+      setTypingSpeed(50);
+    } else {
+      setCurrentText(fullText.substring(0, currentText.length + 1));
+      setTypingSpeed(110);
+    }
+
+    if (!isDeleting && currentText === fullText) {
+      setTimeout(() => setIsDeleting(true), 1800);
+    } else if (isDeleting && currentText === '') {
+      setIsDeleting(false);
+      setLoopNum(loopNum + 1);
+      setTypingSpeed(400);
+    }
+  };
+
+  const handleScrollToSection = (id) => {
+    const element = document.getElementById(id);
     if (element) {
       const offsetTop = element.offsetTop - 75;
       window.scrollTo({
@@ -56,7 +68,19 @@ export default function Hero() {
       <div className="hero-container container">
         <div className="hero-content">
           <div className="hero-greeting-wrapper">
-            <span className="hero-greeting badge badge-cyan">Welcome to my universe</span>
+            <div className="hero-badge">
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                viewBox="0 0 24 24" 
+                fill="#facc15" 
+                width="14" 
+                height="14" 
+                className="hero-badge-icon"
+              >
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+              </svg>
+              <span className="hero-badge-text">SOFTWARE ENGINEER • AI/ML • FULL-STACK</span>
+            </div>
           </div>
           
           <h1 className="hero-title">
@@ -76,58 +100,136 @@ export default function Hero() {
           </p>
 
           <div className="hero-ctas">
-            <button onClick={() => handleScrollToSection('projects')} className="btn btn-primary">
-              View My Work
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            <button 
+              onClick={() => setShowResumeModal(true)} 
+              className="btn btn-download-cv"
+              type="button"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>Download CV</span>
             </button>
-            <button onClick={() => handleScrollToSection('contact')} className="btn btn-secondary">
-              Let's Connect
+
+            <button 
+              onClick={() => handleScrollToSection('contact')} 
+              className="btn btn-connect"
+            >
+              <span>Connect With Me</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
             </button>
-          </div>
-
-          <div className="hero-socials">
-            {/* GitHub */}
-            <a href="https://github.com/saiswethandhussa" target="_blank" rel="noopener noreferrer" className="social-icon" aria-label="GitHub">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
-            </a>
-            
-            {/* LinkedIn */}
-            <a href="https://www.linkedin.com/in/sai-swethan-dhussa-903006288/" target="_blank" rel="noopener noreferrer" className="social-icon" aria-label="LinkedIn">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-            </a>
-
-            {/* Email */}
-            <a href="mailto:saiswethandhussa@gmail.com" className="social-icon" aria-label="Email">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-            </a>
           </div>
         </div>
 
-        {/* Hero Interactive Showcase Profile Widget */}
-        <div className="hero-widget-container">
-          <div className="glass-card hero-widget">
-            <div className="widget-header">
-              <div className="widget-dot red"></div>
-              <div className="widget-dot yellow"></div>
-              <div className="widget-dot green"></div>
-              <span className="widget-title">terminal.js</span>
-            </div>
-            <div className="widget-body">
-              <div className="code-line"><span className="code-keyword">const</span> developer = <span className="code-bracket">&#123;</span></div>
-              <div className="code-line indent"><span className="code-prop">name</span>: <span className="code-val">"Sai Swethan Dhussa"</span>,</div>
-              <div className="code-line indent"><span className="code-prop">college</span>: <span className="code-val">"IIIT Ranchi"</span>,</div>
-              <div className="code-line indent"><span className="code-prop">course</span>: <span className="code-val">"B.Tech CSE (2023 - 2027)"</span>,</div>
-              <div className="code-line indent"><span className="code-prop">passions</span>: <span className="code-bracket">[</span><span className="code-val">"Scalable Web Apps"</span>, <span className="code-val">"DSA"</span><span className="code-bracket">]</span>,</div>
-              <div className="code-line indent"><span className="code-prop">currentFocus</span>: <span className="code-val">"Full Stack & Performance"</span></div>
-              <div className="code-line"><span className="code-bracket">&#125;</span>;</div>
-              <br />
-              <div className="code-line"><span className="code-comment">// Solved 300+ DSA Problems across platforms!</span></div>
-              <div className="code-line"><span className="code-keyword">console</span>.log(developer.passions);</div>
-              <div className="code-output">&gt; ['Scalable Web Apps', 'DSA']</div>
-            </div>
+        {/* Hero Profile Image */}
+        <div className="hero-image-container">
+          <div className="hero-image-wrapper">
+            <img 
+              src={profileImg} 
+              alt="Sai Swethan Dhussa" 
+              className="hero-profile-img"
+            />
           </div>
         </div>
       </div>
+
+      {/* Dual Resume Selection Modal */}
+      {showResumeModal && typeof document !== 'undefined' && createPortal(
+        <div className="resume-modal-overlay" onClick={() => setShowResumeModal(false)}>
+          <div className="resume-modal-box glass-card" onClick={(e) => e.stopPropagation()}>
+            <div className="resume-modal-header">
+              <div className="resume-header-info">
+                <h3 className="resume-modal-title">Select Resume Profile</h3>
+              </div>
+              <button 
+                className="resume-close-btn" 
+                onClick={() => setShowResumeModal(false)}
+                aria-label="Close modal"
+              >
+                ✕
+              </button>
+            </div>
+
+            <p className="resume-modal-desc">
+              Choose the targeted resume matching the role requirements:
+            </p>
+
+            <div className="resume-cards-grid">
+              {/* AI & Data Science Resume */}
+              <a 
+                href="https://drive.google.com/file/d/1HEU39_FuV5g6UTl-mKHOE7nIBvnKhHzo/view?usp=drive_link" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="resume-choice-card"
+                onClick={() => setShowResumeModal(false)}
+              >
+                <div className="resume-card-icon-box ai-glow">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+                  </svg>
+                </div>
+                <div className="resume-card-text">
+                  <div className="resume-card-title-row">
+                    <h4 className="resume-choice-title">AI & Data Science CV</h4>
+                    <span className="resume-mini-tag">GenAI & ML</span>
+                  </div>
+                  <p className="resume-choice-desc">
+                    LangGraph, Hybrid RAG, Qdrant, MLOps, Gemini 2.5, Scikit-Learn & Python.
+                  </p>
+                </div>
+                <div className="resume-card-action">
+                  <span>View PDF</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                  </svg>
+                </div>
+              </a>
+
+              {/* Full Stack & Software Engineering Resume */}
+              <a 
+                href="https://drive.google.com/file/d/1-fZZysVABSHTpgTc3XW6q07nvwxuSygN/view?usp=drive_link" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="resume-choice-card"
+                onClick={() => setShowResumeModal(false)}
+              >
+                <div className="resume-card-icon-box fs-glow">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                  </svg>
+                </div>
+                <div className="resume-card-text">
+                  <div className="resume-card-title-row">
+                    <h4 className="resume-choice-title">Full-Stack & SDE CV</h4>
+                    <span className="resume-mini-tag">Microservices</span>
+                  </div>
+                  <p className="resume-choice-desc">
+                    Spring Boot, React.js, Next.js, Keycloak, PostgreSQL, DSA & Microservices.
+                  </p>
+                </div>
+                <div className="resume-card-action">
+                  <span>View PDF</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                  </svg>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </section>
   );
 }

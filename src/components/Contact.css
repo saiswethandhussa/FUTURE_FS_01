@@ -1,5 +1,5 @@
 .contact-section {
-  background-color: var(--bg-secondary);
+  background-color: transparent;
 }
 
 .contact-grid {
@@ -100,13 +100,10 @@ a.info-val:hover {
   text-decoration: underline;
 }
 
-/* =========================================
-   FORM PANEL (RIGHT)
-   ========================================= */
 .contact-form-panel {
-  background-color: var(--bg-tertiary);
-  border-color: var(--border-glass-hover);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  box-shadow: var(--card-shadow);
 }
 
 .contact-form {
@@ -123,9 +120,9 @@ a.info-val:hover {
 .form-input {
   width: 100%;
   padding: 1rem 1.25rem;
-  background-color: var(--bg-primary);
+  background-color: var(--bg-secondary);
   border: 1px solid var(--border-glass);
-  border-radius: 8px;
+  border-radius: 12px;
   outline: none;
   font-size: 0.95rem;
   color: var(--text-primary);
@@ -162,7 +159,7 @@ a.info-val:hover {
   font-size: 0.75rem;
   font-weight: 700;
   color: var(--accent-cyan);
-  background-color: var(--bg-tertiary);
+  background-color: var(--bg-card);
 }
 
 .btn-submit {
@@ -226,4 +223,76 @@ a.info-val:hover {
   max-width: 320px;
   margin-bottom: 2rem;
   line-height: 1.6;
+}
+
+.success-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.form-submit-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 576px) {
+  .form-submit-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.btn-submit-email {
+  background: linear-gradient(135deg, #00b4d8 0%, #6366f1 100%);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.85rem 1.25rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 15px rgba(0, 180, 216, 0.35);
+  transition: all var(--transition-normal);
+}
+
+.btn-submit-email:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 180, 216, 0.5);
+}
+
+.btn-submit-whatsapp {
+  background: #25d366;
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.85rem 1.25rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+  transition: all var(--transition-normal);
+}
+
+.btn-submit-whatsapp:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45);
+}
+
+.btn-whatsapp-direct {
+  background: #25d366;
+  color: #ffffff;
+  font-weight: 700;
+  border: none;
 }

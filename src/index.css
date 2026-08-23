@@ -7,19 +7,22 @@
 */
 
 :root {
-  /* Color Palette */
-  --bg-primary: hsl(222, 47%, 7%);
-  --bg-secondary: hsl(222, 47%, 11%);
-  --bg-tertiary: hsl(222, 47%, 15%);
-  --bg-glass: hsla(222, 47%, 11%, 0.7);
-  --bg-glass-hover: hsla(222, 47%, 16%, 0.8);
+  /* Color Palette - Precise Dark Blue Theme (#02081a) */
+  --bg-primary: #02081a;
+  --bg-secondary: #071330;
+  --bg-tertiary: #0c1e4a;
+  --bg-glass: rgba(7, 19, 48, 0.75);
+  --bg-card: rgba(7, 19, 48, 0.75);
+  --bg-card-hover: rgba(12, 30, 74, 0.85);
+  --bg-tag: rgba(14, 28, 66, 0.7);
+  --border-tag: rgba(255, 255, 255, 0.09);
   
-  --border-glass: rgba(255, 255, 255, 0.08);
-  --border-glass-hover: rgba(255, 255, 255, 0.16);
+  --border-glass: rgba(56, 189, 248, 0.14);
+  --border-glass-hover: rgba(56, 189, 248, 0.3);
 
-  --text-primary: hsl(210, 40%, 98%);
-  --text-secondary: hsl(215, 20%, 75%);
-  --text-muted: hsl(215, 16%, 50%);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
 
   /* Neons & Accent Colors */
   --accent-cyan: hsl(180, 100%, 50%);
@@ -32,6 +35,7 @@
   /* Box Shadows */
   --glow-cyan: 0 0 20px hsla(180, 100%, 50%, 0.2);
   --glow-purple: 0 0 20px hsla(263, 90%, 65%, 0.2);
+  --card-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
   
   /* Fonts */
   --font-headings: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -43,6 +47,32 @@
   --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+[data-theme="light"],
+body.light-theme {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  --bg-glass: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8fafc;
+  --bg-tag: #f1f5f9;
+  --border-tag: #e2e8f0;
+  
+  --border-glass: #e2e8f0;
+  --border-glass-hover: rgba(2, 132, 199, 0.35);
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+
+  --accent-cyan: #0284c7;
+  --accent-purple: #7c3aed;
+  --accent-emerald: #059669;
+  --accent-amber: #d97706;
+
+  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+}
+
 /* =========================================
    RESETS & GLOBAL LAYOUT
    ========================================= */
@@ -52,13 +82,39 @@
   padding: 0;
 }
 
+html, body, #root {
+  background-color: var(--bg-primary);
+  background: var(--bg-primary);
+  min-height: 100vh;
+  width: 100%;
+  transition: background-color var(--transition-normal), color var(--transition-normal);
+}
+
+[data-theme="dark"] html,
+[data-theme="dark"] body,
+[data-theme="dark"] #root,
+body.dark-theme,
+body.dark-theme #root {
+  background-color: #02081a !important;
+  background: #02081a !important;
+}
+
+[data-theme="light"] html,
+[data-theme="light"] body,
+[data-theme="light"] #root,
+body.light-theme,
+body.light-theme #root {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #0f172a;
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 80px; /* Offset for sticky nav */
 }
 
 body {
-  background-color: var(--bg-primary);
   color: var(--text-primary);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
@@ -173,7 +229,6 @@ button, input, textarea, select {
 }
 
 .glass-card:hover {
-  border-color: var(--border-glass-hover);
   transform: translateY(-4px);
 }
 
@@ -300,47 +355,7 @@ button, input, textarea, select {
   50% { transform: translateY(-8px); }
 }
 
-/* Background Glowing Dots */
+/* Background Glows Disabled for Clean Dark Blue Canvas */
 .bg-glow-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.bg-glow {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(120px);
-  opacity: 0.15;
-  animation: pulseGlow 10s infinite ease-in-out;
-}
-
-.glow-1 {
-  width: 400px;
-  height: 400px;
-  top: -10%;
-  right: -5%;
-  background: var(--accent-cyan);
-}
-
-.glow-2 {
-  width: 500px;
-  height: 500px;
-  bottom: 10%;
-  left: -10%;
-  background: var(--accent-purple);
-}
-
-.glow-3 {
-  width: 350px;
-  height: 350px;
-  top: 50%;
-  right: 15%;
-  background: var(--accent-cyan);
-  animation-delay: 3s;
+  display: none;
 }

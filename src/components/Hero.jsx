@@ -11,10 +11,10 @@ export default function Hero() {
   const [showResumeModal, setShowResumeModal] = useState(false);
 
   const roles = [
-    'Software Developer',
-    'Full-Stack Engineer',
-    'Competitive Programmer',
-    'Problem Solver'
+    'Full-Stack Developer',
+    'AI / ML Engineer',
+    'Software Engineer',
+    'GenAI & RAG Specialist'
   ];
 
   useEffect(() => {
@@ -89,7 +89,7 @@ export default function Hero() {
           </h1>
 
           <div className="hero-subtitle">
-            <span className="subtitle-prefix">I am a </span>
+            <span className="subtitle-prefix">{currentText.startsWith('AI') ? 'I am an ' : 'I am a '}</span>
             <span className="subtitle-typing">{currentText}</span>
             <span className="typing-cursor">|</span>
           </div>
